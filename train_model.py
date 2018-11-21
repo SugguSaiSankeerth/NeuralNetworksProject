@@ -4,13 +4,14 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
-from managedata import DataSet
+from data import DataSet
 import os.path
 
 data = DataSet()
 
 checkpointer = ModelCheckpoint(
-    filepath=os.path.join('data', 'savedmod', 'inception.{epoch:03d}-{val_loss:.2f}.hdf5'),
+    # filepath=os.path.join('data', 'savedmodels', 'inception.{epoch:03d}-{val_loss:.2f}.hdf5'),
+    filepath=os.path.join('data', 'savedmodels', 'inception.model.hdf5'),
     verbose=1,
     save_best_only=True)
 
@@ -83,9 +84,9 @@ def train_model(model, nb_epoch, generators, callbacks=[]):
     train_generator, validation_generator = generators
     model.fit_generator(
         train_generator,
-        steps_per_epoch=100,
+        steps_per_epoch=1,
         validation_data=validation_generator,
-        validation_steps=10,
+        validation_steps=1,
         epochs=nb_epoch,
         callbacks=callbacks)
     print("train model end")
