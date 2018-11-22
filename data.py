@@ -61,6 +61,11 @@ class DataSet():
 
         # Get the data.
         self.data = self.get_data()
+        print('-'*80)
+        print("Data in data")
+        print(len(self.data))
+        print('-'*80)
+
 
         # Get the classes.
         self.classes = self.get_classes()
@@ -217,6 +222,10 @@ class DataSet():
         filename = sample[2]
         path = os.path.join(self.sequence_path, filename + '-' + str(self.seq_length) + \
             '-' + data_type + '.npy')
+        print('-'*80)
+        print("path")
+        print(path)
+        print('-'*80)
         if os.path.isfile(path):
             return np.load(path)
         else:
@@ -253,9 +262,13 @@ class DataSet():
     def get_frames_for_sample(sample):
         """Given a sample row from the data file, get all the corresponding frame
         filenames."""
-        path = os.path.join('data', sample[0], sample[1])
+        path = os.path.join('data','frames', sample[0], sample[1])
+        print('-'*80)
+        print("get_frames_for_sample path")
+        print(path)
+        print('-'*80)
         filename = sample[2]
-        images = sorted(glob.glob(os.path.join(path, filename + '*jpg')))
+        images = sorted(glob.glob(os.path.join(path,'**', filename + '*jpg')))
         return images
 
     @staticmethod
@@ -268,6 +281,11 @@ class DataSet():
         """Given a list and a size, return a rescaled/samples list. For example,
         if we want a list of size 5 and we have a list of size 25, return a new
         list of size five which is every 5th element of the origina list."""
+        print('-'*80)
+        print("size",size)
+        print("len(input_list)",len(input_list))
+        
+        print('-'*80)
         assert len(input_list) >= size
 
         # Get the number to skip between iterations.
