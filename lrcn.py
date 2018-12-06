@@ -1,6 +1,4 @@
-"""
-A collection of models we'll use to attempt to classify videos.
-"""
+
 from keras.layers import Dense, Flatten, Dropout, ZeroPadding3D
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential, load_model
