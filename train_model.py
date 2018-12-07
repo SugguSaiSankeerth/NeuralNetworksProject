@@ -9,6 +9,7 @@ import os.path
 
 data = DataSet()
 
+#Saving the Model
 checkpointer = ModelCheckpoint(
     filepath=os.path.join('data', 'savedmodels', 'inception.model.hdf5'),
     verbose=1,
