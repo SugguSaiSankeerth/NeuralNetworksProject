@@ -8,20 +8,25 @@ import os.path
 def train(data_type, seq_length, model, saved_model=None,
           class_limit=None, image_shape=None,
           load_to_memory=False, batch_size=32, nb_epoch=100):
+    #Save the Model
     checkpointer = ModelCheckpoint(
         filepath=os.path.join('data', 'savedmodels', model + '-' + data_type + \
             '.{epoch:03d}-{val_loss:.3f}.hdf5'),
         verbose=1,
         save_best_only=True)
 
+    #TensorBoard
     tb = TensorBoard(log_dir=os.path.join('data', 'logs', model))
 
+    #Stop after 5 epochs when there is no progress in Learning
     early_stopper = EarlyStopping(patience=5)
 
+    #Save Results in csv format
     timestamp = time.time()
     csv_logger = CSVLogger(os.path.join('data', 'logs', model + '-' + 'training-' + \
         str(timestamp) + '.log'))
 
+    #Process the Data
     if image_shape is None:
         data = DataSet(
             seq_length=seq_length,
@@ -34,17 +39,23 @@ def train(data_type, seq_length, model, saved_model=None,
             image_shape=image_shape
         )
 
+    #Get Steps per epoch
+    #Guess how much of data.data is Train data by multiplying with 0.7
     steps_per_epoch = (len(data.data) * 0.7) // batch_size
 
     if load_to_memory:
-=        X, y = data.get_all_sequences_in_memory('train', data_type)
+        #Get Data
+        X, y = data.get_all_sequences_in_memory('train', data_type)
         X_test, y_test = data.get_all_sequences_in_memory('test', data_type)
     else:
-        generator = data.frame_generator(batch_size, 'train', data_type)
-        val_generator = data.frame_generator(batch_size, 'test', data_type)
+          #Get Generators
+          generator = data.frame_generator(batch_size, 'train', data_type)
+          val_generator = data.frame_generator(batch_size, 'test', data_type)
 
+    #Get Model
     rm = ResearchModels(len(data.classes), model, seq_length, saved_model)
 
+    #Fit by using Standard fit
     if load_to_memory:
         rm.model.fit(
             X,
@@ -66,14 +77,17 @@ def train(data_type, seq_length, model, saved_model=None,
             workers=4)
 
 def main():
-  
+    #Main Training Settings
+
+    #Model can be lrcn,conv_3d,c3d,lstm,mlp
     model = 'lrcn'
-    saved_model = None  
-    class_limit = None  
+    saved_model = None  #None or weights File to save this model
+    class_limit = None  #int, can be 1-101 or None
     seq_length = 40
-    load_to_memory = False  
+    load_to_memory = False  #pre-load the sequences into Memory
     nb_epoch = 1000
 
+    # Chose Data Type and Image Shape based on model.
     if model in ['conv_3d', 'c3d', 'lrcn']:
         data_type = 'images'
         image_shape = (80, 80, 3)
